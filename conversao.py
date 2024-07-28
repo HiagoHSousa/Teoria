@@ -1,5 +1,6 @@
 import functions
 import os
+from graphviz import Digraph
 
 def conversaoAFNAFN():
 
@@ -65,6 +66,29 @@ def conversaoAFNAFN():
     functions.crEstados(folAFD, ["".join(e) for e in estadosAFD]).close()
 
 
+    #desenhar o AFD convertido INIC
+    automato = Digraph()
+    automato.attr(rankdir='LR')
+    automato.attr('node', shape='circle')    
+        
+    automato.node('->', shape='none', width='0', heigth='0',label='')
+    automato.edge('->', estado_inicial)
+        
+    for estado_final in estados_finaisAFD: 
+
+        automato.node(estado_final, shape='doublecircle', fontsize='17')
+
+    for (estado, simbolo) in tabTranAFD:
+
+        destino = tabTranAFD[(estado, simbolo)]
+        automato.edge(estado,destino,label=simbolo) 
+
+    automato.render(folAFD + ('AFDConvertido'), format='png', cleanup=True)
+    #desenhar o AFD convertido FIM
+
+
+
+    #teste de equivalencia
     print("Para testar a equivalencia do AFN e do AFD, digite uma palavra: ", end="")
 
     palavra = input().strip()

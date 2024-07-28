@@ -1,5 +1,6 @@
 import os
 import time
+from graphviz import Digraph
 
 
 def arquivoAutomato(folder, func_transicao): #passa as funcoes de transicao para um arquivo
@@ -65,6 +66,40 @@ def pastasCriadas():
 
 
 
-def dicionario(dict):
-    lista = [(estado_atual, valor, estado_seguinte) for (estado_atual, valor), estados_seguintes in dict.items() for estado_seguinte in estados_seguintes]
+def converter_para_lista_transicoes(transicoes_dict):
+
+    lista = []
+
+    for (estado_origem, simbolo), estados_destinos in transicoes_dict.items():
+
+        if estados_destinos is not None:  # Verifica se há transições válidas
+
+            if isinstance(estados_destinos, list):
+
+                for estado_destino in estados_destinos:
+                    lista.append((estado_origem, simbolo, estado_destino))
+
+            else:
+                lista.append((estado_origem, simbolo, estados_destinos))
+
     return lista
+
+def desenhar_automato(estado_inicial, estados_finais, func_transicao):
+
+    automato = Digraph() 
+    automato.attr(rankdir='LR') 
+    automato.attr('node', shape='circle')
+    
+    
+    automato.node('->', shape='none', width='0', heigth='0',label='')
+    automato.edge('->', estado_inicial)
+    
+    for estado_final in estados_finais: 
+
+        automato.node(estado_final, shape='doublecircle', fontsize='17')
+
+    for estado_origem, simbolo, estado_destino in func_transicao:
+        
+        automato.edge(estado_origem,estado_destino,label=simbolo) 
+
+    return automato

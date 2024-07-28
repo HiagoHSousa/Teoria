@@ -63,7 +63,13 @@ def criarAF():
                 informacoesAFD = functions.informacaoAutomato(folAFD, estado_inicial, estados_finais, alfabeto) # salva o inicio, fins e alfabeto
                 informacoesAFD.close()
 
-                #delta_lista = functions.dict_lista(func_transicao)
+
+                delta_lista = functions.converter_para_lista_transicoes(func_transicao)
+                print(delta_lista)
+
+                # Plotando
+                AutomatoAFD = functions.desenhar_automato(estado_inicial, estados_finais, delta_lista)
+                AutomatoAFD.render(folAFD + 'desenhoAFD', format='png', cleanup=True)
 
             elif opcao == 2:
                 print("AFN")
@@ -105,6 +111,14 @@ def criarAF():
 
                 informacoesAFN = functions.informacaoAutomato(folAFN, estado_inicial, estados_finais, alfabeto) # salva o inicio, fins e alfabeto
                 informacoesAFN.close()
+
+
+                delta_lista = functions.converter_para_lista_transicoes(func_transicao)
+                print(delta_lista)
+
+                # Plotando
+                AutomatoAFD = functions.desenhar_automato(estado_inicial, estados_finais, delta_lista)
+                AutomatoAFD.render(folAFN + 'desenhoAFN', format='png', cleanup=True)
 
 
 
