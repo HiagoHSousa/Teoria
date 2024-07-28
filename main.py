@@ -3,6 +3,7 @@ import ler
 import criar
 import functions
 import conversao
+import minimiza
 
 folAFD = "AFD/"
 folAFN = "AFN/"
@@ -42,6 +43,7 @@ while True:
                 continue
 
             elif opcao == 4:
+                minimiza.minizacaoAFD()
                 continue
 
             elif opcao == 5:
