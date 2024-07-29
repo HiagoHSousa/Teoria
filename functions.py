@@ -4,12 +4,14 @@ from graphviz import Digraph
 
 
 def arquivoAutomato(folder, func_transicao): #passa as funcoes de transicao para um arquivo
+
     arquivoAF = open(folder + ('AFCriado.txt'), 'w') 
     arquivoAF.writelines(str(func_transicao))
     return arquivoAF
 
 
 def informacaoAutomato(folder, estado_inicial, estados_finais, alfabeto): #passa as informacoes para um arquivo
+
     informacaoAF = open(folder + ('informacaoAF'), 'w')
     informacaoAF.write(estado_inicial + '\n')
     informacaoAF.writelines(' '.join(estados_finais))
@@ -25,7 +27,24 @@ def crEstados(folder, estados): #passa os estados para um arquivo
     return arqui
 
 
-def extrairInfAF(folder, estado_inicial, estados_finais, alfabeto):
+def readEstados(folder): #le o arquivo de estados
+
+    arq = open(folder+ ('estados.txt'), 'r')
+    estados = arq.readlines()
+    estados = [item.strip() for item in estados]
+    return estados
+
+
+def estadoEquivalente(estado, combEstados):#econtra os estados equivalentes
+        
+        while estado in combEstados and combEstados[estado] != estado:
+            estado = combEstados[estado]
+
+        return estado
+
+
+def extrairInfAF(folder, estado_inicial, estados_finais, alfabeto): #le o arquivo de informaçoes do AF
+
     filepath = os.path.join(folder, 'informacaoAF')
     
     if not os.path.exists(filepath):
@@ -40,7 +59,9 @@ def extrairInfAF(folder, estado_inicial, estados_finais, alfabeto):
     
     return estado_inicial, estados_finais, alfabeto
 
-def extrairDict(folder):
+
+def extrairDict(folder): #le o arquivo das transiçoes do AF
+
     filepath = os.path.join(folder, 'AFCriado.txt')
     
     if not os.path.exists(filepath):
@@ -53,7 +74,21 @@ def extrairDict(folder):
     return func_transicao
 
 
+def verificaAFcriado(pasta):
+
+    time.sleep(1)
+    path = os.path.join(pasta, 'AFCriado.txt')
+
+    if not os.path.isfile(path):
+
+        print('Arquivo AFCriado.txt não encontrado. Crie um AFD ou AFN.')
+        return False
+    
+    return True
+
+
 def pastasCriadas():
+
     time.sleep(1)
     if os.path.exists('AFD'):
         print("\n Há um AFD já criado\n")
@@ -65,8 +100,7 @@ def pastasCriadas():
         print("\nCrie um AFD ou AFN\n")
 
 
-
-def converter_para_lista_transicoes(transicoes_dict):
+def converter_para_lista_transicoes(transicoes_dict): #converte o AF para poder desenhar na outra funçao
 
     lista = []
 
@@ -84,7 +118,7 @@ def converter_para_lista_transicoes(transicoes_dict):
 
     return lista
 
-def desenhar_automato(estado_inicial, estados_finais, func_transicao):
+def desenhar_automato(estado_inicial, estados_finais, func_transicao): #desenha o AF
 
     automato = Digraph() 
     automato.attr(rankdir='LR') 
