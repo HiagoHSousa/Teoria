@@ -29,8 +29,8 @@ def crEstados(folder, estados): #passa os estados para um arquivo
 
 def readEstados(folder): #le o arquivo de estados
 
-    arq = open(folder+ ('estados.txt'), 'r')
-    estados = arq.readlines()
+    with open(os.path.join(folder, 'estados.txt'), 'r') as arq:
+        estados = arq.readlines()
     estados = [item.strip() for item in estados]
     return estados
 
@@ -137,3 +137,17 @@ def desenhar_automato(estado_inicial, estados_finais, func_transicao): #desenha 
         automato.edge(estado_origem,estado_destino,label=simbolo) 
 
     return automato
+
+
+def atualiza_delta_AFD(func_transicaoAFD, combEstados, alfabeto):
+    n_func_transicaoAFD = {}
+    for (estado, simbolo), destinos in func_transicaoAFD.items():
+        novo_estado = combEstados.get(estado, estado)
+        if isinstance(destinos, list):
+            n_chegada = {combEstados.get(dest, dest) for dest in destinos}
+        else:
+            n_chegada = {combEstados.get(destinos, destinos)}
+        if len(n_chegada) != 1:
+            raise ValueError(f"Erro: Múltiplos destinos para ({novo_estado}, {simbolo}): {n_chegada}")
+        n_func_transicaoAFD[(novo_estado, simbolo)] = list(n_chegada)[0]
+    return n_func_transicaoAFD
