@@ -4,6 +4,7 @@ import criar
 import functions
 import conversao
 import minimiza
+import turing
 
 folAFD = "AFD/"
 folAFN = "AFN/"
@@ -25,7 +26,8 @@ while True:
         print("2. Ler AFD e AFN")
         print("3. Converter AFN em AFD")
         print("4. Minimizar AFD")
-        print("5. Sair")
+        print("5. Máquina de Turing")
+        print("6. Sair")
         try:
 
             opcao = int(input("Escolha o que quer fazer: "))
@@ -47,6 +49,10 @@ while True:
                 continue
 
             elif opcao == 5:
+                turing.MT()
+                continue
+
+            elif opcao == 6:
                 break
 
             else:

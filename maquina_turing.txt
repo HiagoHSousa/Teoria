@@ -1,0 +1,8 @@
+Estados: q1,q2
+Alfabeto: a,_
+Alfabeto da Fita: a,_
+Estado Inicial: q1
+Estado de Rejeição: q1
+Estados Finais: q2
+Transições:
+(q1, a) -> (q2, _, R)
