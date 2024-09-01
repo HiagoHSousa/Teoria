@@ -104,3 +104,106 @@ def minizacaoAFD():
 
 
 
+
+
+def minimizacaoAFD():
+    folAFD = "AFD/"
+    
+    # Extrair informações do AFD
+    estado_inicial, estados_finais, alfabeto = functions.extrairInfAF(folAFD, "", set(), set())
+    transicoes = functions.extrairDict(folAFD)
+    
+    # 1. Inicializar as partições
+    P = [set(estados_finais), {estado for estado in transicoes if estado not in estados_finais}]
+    
+    while True:
+        nova_P = []
+        for grupo in P:
+            particoes = {}
+            for estado in grupo:
+                chave = tuple(transicoes.get((estado, simbolo), None) for simbolo in alfabeto)
+                if chave not in particoes:
+                    particoes[chave] = set()
+                particoes[chave].add(estado)
+            nova_P.extend(particoes.values())
+        
+        if nova_P == P:
+            break
+        P = nova_P
+    
+    # 2. Construir o novo AFD
+    novo_transicoes = {}
+    novo_estados_finais = []
+    novo_estados = []
+    novo_estado_inicial = None
+
+    mapa_estados = {}
+
+    for grupo in P:
+        # Verificar o conteúdo de grupo
+        print(f"Grupo original: {grupo}")
+
+        # Garantindo que `grupo` contém apenas strings
+        grupo_str = list(grupo)  # Converter o grupo em uma lista de strings, se necessário
+
+        # Verificar o conteúdo de grupo_str
+        print(f"Grupo como strings: {grupo_str}")
+
+        try:
+            novo_estado = "".join(sorted(grupo_str))
+        except TypeError as e:
+            print(f"Erro ao criar novo estado: {e}")
+            print(f"Tipo de grupo_str: {[type(item) for item in grupo_str]}")
+            raise
+
+        novo_estados.append(novo_estado)
+        for estado in grupo:
+            mapa_estados[estado] = novo_estado
+        
+        if estado_inicial in grupo:
+            novo_estado_inicial = novo_estado
+        if any(estado in estados_finais for estado in grupo):
+            novo_estados_finais.append(novo_estado)
+    
+    # Verificar se todos os estados de destino estão mapeados
+    for (estado, simbolo), destino in transicoes.items():
+        if estado in mapa_estados:
+            if destino in mapa_estados:
+                novo_transicoes[(mapa_estados[estado], simbolo)] = mapa_estados[destino]
+            else:
+                # Adiciona o estado de destino ao mapa se ele não estiver presente
+                novo_estado_destino = "".join(sorted([destino]))  # Garantindo que destino é uma string
+                mapa_estados[destino] = novo_estado_destino
+                novo_transicoes[(mapa_estados[estado], simbolo)] = novo_estado_destino
+        else:
+            # Adiciona o estado de origem ao mapa se ele não estiver presente
+            novo_estado_origem = "".join(sorted([estado]))  # Garantindo que origem é uma string
+            mapa_estados[estado] = novo_estado_origem
+            if destino in mapa_estados:
+                novo_transicoes[(novo_estado_origem, simbolo)] = mapa_estados[destino]
+            else:
+                novo_estado_destino = "".join(sorted([destino]))  # Garantindo que destino é uma string
+                mapa_estados[destino] = novo_estado_destino
+                novo_transicoes[(novo_estado_origem, simbolo)] = novo_estado_destino
+
+    # Salva o AFD minimizado em um arquivo
+    functions.arquivoAutomato(folAFD + "Minimizado", novo_transicoes).close()
+    functions.informacaoAutomato(folAFD + "Minimizado", novo_estado_inicial, novo_estados_finais, alfabeto).close()
+    functions.crEstados(folAFD + "Minimizado", novo_estados).close()
+
+    # Desenhar o AFD minimizado
+    automato = Digraph()
+    automato.attr(rankdir='LR')
+    automato.attr('node', shape='circle')    
+        
+    automato.node('->', shape='none', width='0', height='0', label='')
+    automato.edge('->', novo_estado_inicial)
+        
+    for estado_final in novo_estados_finais: 
+        automato.node(estado_final, shape='doublecircle', fontsize='17')
+
+    for (estado, simbolo) in novo_transicoes:
+        destino = novo_transicoes[(estado, simbolo)]
+        automato.edge(estado, destino, label=simbolo) 
+
+    automato.render(folAFD + ('AFDMinimizado'), format='png', cleanup=True)

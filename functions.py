@@ -1,6 +1,7 @@
 import os
 import time
 from graphviz import Digraph
+import itertools
 
 
 def arquivoAutomato(folder, func_transicao): #passa as funcoes de transicao para um arquivo
@@ -139,15 +140,75 @@ def desenhar_automato(estado_inicial, estados_finais, func_transicao): #desenha 
     return automato
 
 
-def atualiza_delta_AFD(func_transicaoAFD, combEstados, alfabeto):
-    n_func_transicaoAFD = {}
-    for (estado, simbolo), destinos in func_transicaoAFD.items():
-        novo_estado = combEstados.get(estado, estado)
-        if isinstance(destinos, list):
-            n_chegada = {combEstados.get(dest, dest) for dest in destinos}
+
+def gerar_palavras(alfabeto, tamPalavra):
+    
+    palavras = []
+
+    for length in range(1, tamPalavra + 1):
+
+        for palavra in itertools.product(alfabeto, repeat=length):
+            
+            palavras.append(''.join(palavra))
+    return palavras
+
+
+
+def testar_multiplas_linguagens_geradas(folAFN, folAFD, tamPalavra):
+
+    # Extrair informações do AFN
+    estado_inicial_AFN, estados_finais_AFN, alfabeto_AFN = extrairInfAF(folAFN, "", set(), set())
+    transicoes_AFN = extrairDict(folAFN)
+
+    # Extrair informações do AFD convertido
+    estado_inicial_AFD, estados_finais_AFD, alfabeto_AFD = extrairInfAF(folAFD, "", set(), set())
+    transicoes_AFD = extrairDict(folAFD)
+
+
+
+    def simular_AFN(estado_atual, palavra):
+        if not palavra:  # Se a palavra foi completamente consumida
+            return estado_atual in estados_finais_AFN
         else:
-            n_chegada = {combEstados.get(destinos, destinos)}
-        if len(n_chegada) != 1:
-            raise ValueError(f"Erro: Múltiplos destinos para ({novo_estado}, {simbolo}): {n_chegada}")
-        n_func_transicaoAFD[(novo_estado, simbolo)] = list(n_chegada)[0]
-    return n_func_transicaoAFD
+            simbolo = palavra[0]
+            proximo_simbolo = palavra[1:]
+            proximos_estados = transicoes_AFN.get((estado_atual, simbolo), [])
+            
+            return any(simular_AFN(estado, proximo_simbolo) for estado in proximos_estados)
+
+
+
+    def simular_AFD(estado_atual, palavra):
+
+        if not palavra:  # Se a palavra foi completamente consumida
+            return estado_atual in estados_finais_AFD
+        
+        else:
+
+            simbolo = palavra[0]
+            proximo_simbolo = palavra[1:]
+            proximo_estado = transicoes_AFD.get((estado_atual, simbolo))
+            
+            if proximo_estado is None:
+                return False
+            
+            return simular_AFD(proximo_estado, proximo_simbolo)
+
+
+    palavras = gerar_palavras(alfabeto_AFN, tamPalavra)
+    
+    for palavra in palavras:
+        # Testar a palavra no AFN
+        aceita_AFN = simular_AFN(estado_inicial_AFN, palavra)
+        
+        # Testar a palavra no AFD convertido
+        aceita_AFD = simular_AFD(estado_inicial_AFD, palavra)
+        
+        
+        if aceita_AFN == aceita_AFD:
+            resultado = "aceita" if aceita_AFN else "regeitada"
+            print(f"A palavra '{palavra}' é {resultado} pelos dois autômatos.")
+            print(f"")
+        else:
+            print(f"A palavra '{palavra}' é reconhecida de forma diferente pelos autômatos.")
+            

@@ -45,7 +45,7 @@ while True:
                 continue
 
             elif opcao == 4:
-                minimiza.minizacaoAFD()
+                minimiza.minimizacaoAFD()
                 continue
 
             elif opcao == 5:
