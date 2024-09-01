@@ -1,5 +1,3 @@
-import json
-
 class TuringMachine:
     def __init__(self, specification):
         self.estados = specification['E']
@@ -28,7 +26,8 @@ class TuringMachine:
 
     def imprimir_fita(self):
         fita_str = ''.join(self.fita)
-        return fita_str[:self.cabeca] + '|' + fita_str[self.cabeca:]
+        return fita_str[:self.cabeca] + '|' + fita_str[self.cabeca:] + ''
+        
 
     def linguagemRegular(self, cadeia):
         self.cabeca = 0
@@ -38,6 +37,8 @@ class TuringMachine:
         print("Início da execução:")
         print("Estado: ", self.estado_atual)
         print("Fita:   ", self.imprimir_fita())
+
+        fitas = [self.imprimir_fita()]
 
         while 0 <= self.cabeca < len(self.fita):
             simbolo_atual = self.fita[self.cabeca]
@@ -50,12 +51,13 @@ class TuringMachine:
                 elif movimento == "L":
                     self.cabeca -= 1
 
+                fitas.append(self.imprimir_fita())
                 print("Estado: ", self.estado_atual)
                 print("Fita:   ", self.imprimir_fita())
             else:
                 break
         
-        return "Sim" if self.estado_atual in self.estado_final else "Não"
+        return "Sim" if self.estado_atual in self.estado_final else "Não", fitas
 
 # Especificação da Máquina de Turing para Linguagem {a^n b^n | n > 0}
 spec = {
@@ -99,7 +101,7 @@ spec2 = {
         ("q0", "_"): ("q_accept", "_", "R"),
 
         ("q1", "a"): ("q3", "a", "R"),
-        ("q1", "b"): ("q1", "b", "R"),
+        ("q1", "b"): ("q3", "b", "R"),
         ("q1", "_"): ("q_accept", "_", "R"),
 
         ("q2", "a"): ("q4", "a", "R"),
