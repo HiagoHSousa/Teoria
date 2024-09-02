@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Autômato Finito</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='af.css') }}">
+</head>
+<body>
+    <h1>Criar Autômato Finito</h1>
+    <form action="{{ url_for('criar_af') }}" method="POST">
+        <label for="tipo_af">Tipo de Autômato:</label>
+        <select id="tipo_af" name="tipo_af" required>
+            <option value="AFD">AFD</option>
+            <option value="AFN">AFN</option>
+        </select>
+
+        <label for="estados">Conjunto de Estados (separados por espaço):</label>
+        <input type="text" id="estados" name="estados" required>
+
+        <label for="alfabeto">Alfabeto (separado por espaço):</label>
+        <input type="text" id="alfabeto" name="alfabeto" required>
+
+        <label for="estado_inicial">Estado Inicial:</label>
+        <input type="text" id="estado_inicial" name="estado_inicial" required>
+
+        <label for="estados_finais">Estados Finais (separados por espaço):</label>
+        <input type="text" id="estados_finais" name="estados_finais" required>
+
+        <label for="transicoes">Funções de Transição (estado, símbolo, próximo estado, separados por vírgula):</label>
+        <textarea id="transicoes" name="transicoes" rows="10" required></textarea>
+
+        <button type="submit">Criar Autômato</button>
+    </form>
+    <a href="{{ url_for('index') }}"><button>Voltar</button></a>
+</body>
+</html>

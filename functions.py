@@ -5,7 +5,7 @@ import itertools
 
 
 def arquivoAutomato(folder, func_transicao): #passa as funcoes de transicao para um arquivo
-
+    
     arquivoAF = open(folder + ('AFCriado.txt'), 'w') 
     arquivoAF.writelines(str(func_transicao))
     return arquivoAF
@@ -92,10 +92,10 @@ def verificaAFcriado(pasta):
 def pastasCriadas():
 
     time.sleep(1)
-    if os.path.exists('AFD'):
+    if os.path.exists('static/AFD'):
         print("\n Há um AFD já criado\n")
 
-    if os.path.exists('AFN'):
+    if os.path.exists('static/AFN'):
         print("\n Há um AFN já criado\n")
 
     else:

@@ -6,8 +6,8 @@ import conversao
 import minimiza
 import turing
 
-folAFD = "AFD/"
-folAFN = "AFN/"
+folAFD = "static/AFD/"
+folAFN = "static/AFN/"
 
 if not os.path.exists(folAFD):
     

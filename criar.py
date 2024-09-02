@@ -1,37 +1,32 @@
 import os
 import functions
 
-
 def criarAF():
-    #estruturas do automato
+    # Estruturas do autômato
     estados = []
     alfabeto = []
     func_transicao = {}
     estado_inicial = ""
     estados_finais = []
 
-    folAFD = "AFD/"
-    folAFN = "AFN/"
-
+    base_folder = 'static/'
+    folAFD = os.path.join(base_folder, 'AFD/')
+    folAFN = os.path.join(base_folder, 'AFN/')
 
     while True:
-
         print("\nMenu")
         print("1. Criar um AFD")
         print("2. Criar um AFN")
-        print("3. Voltar para o inicio")
+        print("3. Voltar para o início")
         try:
-
             opcao = int(input("Escolha o que quer fazer: "))
             if opcao == 1:
-                # recebendos os dados do automato
+                # Recebendo os dados do autômato
                 print("Digite o conjunto dos estados: ", end="")
                 estados = input().split()
 
-
-                print("Digite o alfabeto do automato: ", end="")
+                print("Digite o alfabeto do autômato: ", end="")
                 alfabeto = input().split()
-
 
                 print("Digite o estado inicial: ", end="")
                 estado_inicial = input()
@@ -39,8 +34,7 @@ def criarAF():
                 print("Digite os estados finais: ", end="")
                 estados_finais = input().split()
 
-
-                print("Digite as funçôes de transiçâo: ")
+                print("Digite as funções de transição: ")
                 for estado in estados:
                     for simbolo in alfabeto:
                         print(f"\t {simbolo}")
@@ -48,21 +42,23 @@ def criarAF():
                         proximo_estado = input()
 
                         if proximo_estado == "*":
-                            func_transicao[(estado, simbolo)] = None #simbolo que nao leva para nenhum estado
+                            func_transicao[(estado, simbolo)] = None  # símbolo que não leva para nenhum estado
                         else:
                             func_transicao[(estado, simbolo)] = proximo_estado
 
-                #salvar informaçoes para ler
+                # Criar pasta se não existir
+                if not os.path.exists(folAFD):
+                    os.makedirs(folAFD)
 
-                arquivoAFD = functions.arquivoAutomato(folAFD, func_transicao) #salva as funçoes de transicao
+                # Salvar informações
+                arquivoAFD = functions.arquivoAutomato(folAFD, func_transicao)  # Salva as funções de transição
                 arquivoAFD.close()
-            
-                estadosAFD = functions.crEstados(folAFD, estados) #salva os estados
+
+                estadosAFD = functions.crEstados(folAFD, estados)  # Salva os estados
                 estadosAFD.close()
 
-                informacoesAFD = functions.informacaoAutomato(folAFD, estado_inicial, estados_finais, alfabeto) # salva o inicio, fins e alfabeto
+                informacoesAFD = functions.informacaoAutomato(folAFD, estado_inicial, estados_finais, alfabeto)  # Salva o início, fins e alfabeto
                 informacoesAFD.close()
-
 
                 delta_lista = functions.converter_para_lista_transicoes(func_transicao)
                 print(delta_lista)
@@ -73,14 +69,12 @@ def criarAF():
 
             elif opcao == 2:
                 print("AFN")
-                # recebendos os dados do automato
+                # Recebendo os dados do autômato
                 print("Digite o conjunto dos estados: ", end="")
                 estados = input().split()
 
-
-                print("Digite o alfabeto do automato: ", end="")
+                print("Digite o alfabeto do autômato: ", end="")
                 alfabeto = input().split()
-
 
                 print("Digite o estado inicial: ", end="")
                 estado_inicial = input()
@@ -88,8 +82,7 @@ def criarAF():
                 print("Digite os estados finais: ", end="")
                 estados_finais = input().split()
 
-
-                print("Digite as funçôes de transiçâo: ")
+                print("Digite as funções de transição: ")
                 for estado in estados:
                     for simbolo in alfabeto:
                         print(f"\t {simbolo}")
@@ -97,35 +90,33 @@ def criarAF():
                         proximo_estado = [prox for prox in input().split()]
 
                         if proximo_estado == "*":
-                            func_transicao[(estado, simbolo)] = None #simbolo que nao leva para nenhum estado
+                            func_transicao[(estado, simbolo)] = None  # símbolo que não leva para nenhum estado
                         else:
                             func_transicao[(estado, simbolo)] = proximo_estado
 
-                #salvar informaçoes para ler
+                # Criar pasta se não existir
+                if not os.path.exists(folAFN):
+                    os.makedirs(folAFN)
 
-                arquivoAFN = functions.arquivoAutomato(folAFN, func_transicao) #salva as funçoes de transicao
+                # Salvar informações
+                arquivoAFN = functions.arquivoAutomato(folAFN, func_transicao)  # Salva as funções de transição
                 arquivoAFN.close()
-            
-                estadosAFN = functions.crEstados(folAFN, estados) #salva os estados
+
+                estadosAFN = functions.crEstados(folAFN, estados)  # Salva os estados
                 estadosAFN.close()
 
-                informacoesAFN = functions.informacaoAutomato(folAFN, estado_inicial, estados_finais, alfabeto) # salva o inicio, fins e alfabeto
+                informacoesAFN = functions.informacaoAutomato(folAFN, estado_inicial, estados_finais, alfabeto)  # Salva o início, fins e alfabeto
                 informacoesAFN.close()
-
 
                 delta_lista = functions.converter_para_lista_transicoes(func_transicao)
                 print(delta_lista)
 
                 # Plotando
-                AutomatoAFD = functions.desenhar_automato(estado_inicial, estados_finais, delta_lista)
-                AutomatoAFD.render(folAFN + 'desenhoAFN', format='png', cleanup=True)
-
-
+                AutomatoAFN = functions.desenhar_automato(estado_inicial, estados_finais, delta_lista)
+                AutomatoAFN.render(folAFN + 'desenhoAFN', format='png', cleanup=True)
 
             elif opcao == 3:
-                break    
+                break
 
         except ValueError:
             print('Erro: Você deve entrar com um número inteiro.')
-
-    

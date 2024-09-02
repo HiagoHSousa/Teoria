@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ler Automato</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='ler.css') }}">
+</head>
+<body>
+    <h1>Ler Automato</h1>
+    <form action="{{ url_for('ler_af') }}" method="post">
+        <label for="tipo">Escolha o tipo de automato:</label>
+        <select name="tipo" id="tipo">
+            <option value="afd">AFD</option>
+            <option value="afn">AFN</option>
+        </select>
+        <br><br>
+        <label for="entrada">Digite a linguagem:</label>
+        <input type="text" id="entrada" name="entrada" required>
+        <br><br>
+        <input type="submit" value="Submeter">
+    </form>
+    <br>
+    <a href="{{ url_for('index') }}">Voltar ao menu principal</a>
+</body>
+</html>

@@ -5,8 +5,8 @@ from graphviz import Digraph
 
 def conversaoAFNAFN():
 
-    folAFN = "AFN/"
-    folAFD = "AFD/"
+    folAFN = "static/AFN/"
+    folAFD = "static/AFD/"
     tamPalavra = 5
 
     #informaçoes AFN
@@ -91,11 +91,3 @@ def conversaoAFNAFN():
 
     #teste de equivalencia
     functions.testar_multiplas_linguagens_geradas(folAFN, folAFD, tamPalavra)
-
-
-
-
-
-
-
-

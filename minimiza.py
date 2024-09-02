@@ -3,7 +3,7 @@ from graphviz import Digraph
 
 def minizacaoAFD():
 
-    folAFD = "AFD/"
+    folAFD = "static/AFD/"
 
     alfabeto = []
     estado_inicial = ''

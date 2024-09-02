@@ -1,8 +1,8 @@
 import os
 import functions
 
-folAFD = "AFD/"
-folAFN = "AFN/"
+folAFD = "static/AFD/"
+folAFN = "static/AFN/"
 
 
  

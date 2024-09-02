@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
+</head>
+<body>
+    <h1>Resultado</h1>
+    <p><strong>Entrada:</strong> {{ entrada }}</p>
+    <p>{{ mensagem }}</p>
+    <img src="{{ imagem_automato }}" alt="Desenho do Autômato">
+    <br>
+    <a href="{{ url_for('ler_af') }}">Voltar</a>
+    <br>
+    <a href="{{ url_for('index') }}">Voltar ao menu principal</a>
+</body>
+</html>

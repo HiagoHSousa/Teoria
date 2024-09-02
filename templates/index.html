@@ -3,81 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Máquina de Turing</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Menu</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylemenu.css') }}">
 </head>
 <body>
-    <h1>Máquina de Turing</h1>
-
-    <!-- Opção 1: Linguagem a^n b^n -->
-    <h2>Linguagem Regular a^n b^n</h2>
-    <form action="{{ url_for('linguagem') }}" method="POST">
-        <label for="cadeia">Digite a cadeia (composta por 'a' e 'b'):</label>
-        <input type="text" id="cadeia" name="cadeia" required>
-        <button type="submit">Executar</button>
+    <h1>Menu</h1>
+    <form action="{{ url_for('criar_af') }}" method="get">
+        <button type="submit">Criar AFD e AFN</button>
     </form>
-    {% if tab == "linguagem" %}
-    <div id="resultado1">Resultado: {{ resultado }}</div>
-    <div class="fita-container" id="fita1">
-    <div class="fita-state">{{ fita|join('<br>')|safe }}</div>
-    </div>
-    {% endif %}
-
-    <!-- Opção 2: Verificação de Palíndromos -->
-    <h2>Verificação de Palíndromos</h2>
-    <form action="{{ url_for('palindromo') }}" method="POST">
-        <label for="cadeia_palindromo">Digite a cadeia:</label>
-        <input type="text" id="cadeia_palindromo" name="cadeia_palindromo" required>
-        <button type="submit">Executar</button>
+    <form action="{{ url_for('ler_af') }}" method="get">
+        <button type="submit">Ler AFD e AFN</button>
     </form>
-    {% if tab == "palindromo" %}
-    <div id="resultado1">Resultado: {{ resultado_palindromo }}</div>
-    <div class="fita-container" id="fita1">
-    <div class="fita-state">{{ fita|join('<br>')|safe }}</div>
-    </div>
-    {% endif %}
-
-    <!-- Opção 3: Definir Especificação -->
-    <h2>Definir Especificação da Máquina de Turing</h2>
-    <form action="{{ url_for('definir') }}" method="POST">
-        <label for="estados">Estados (separados por vírgula):</label>
-        <input type="text" id="estados" name="estados" required><br>
-
-        <label for="alfabeto">Alfabeto (separado por vírgula):</label>
-        <input type="text" id="alfabeto" name="alfabeto" required><br>
-
-        <label for="alfabeto_fita">Alfabeto da Fita (separado por vírgula):</label>
-        <input type="text" id="alfabeto_fita" name="alfabeto_fita" required><br>
-
-        <label for="estado_inicial">Estado Inicial:</label>
-        <input type="text" id="estado_inicial" name="estado_inicial" required><br>
-
-        <label for="estado_rejeicao">Estado de Rejeição:</label>
-        <input type="text" id="estado_rejeicao" name="estado_rejeicao" required><br>
-
-        <label for="estados_finais">Estados Finais (separados por vírgula):</label>
-        <input type="text" id="estados_finais" name="estados_finais" required><br>
-
-        <label for="transicoes">Transições (uma por linha no formato (estado_atual, simbolo_atual) -> (proximo_estado, simbolo_escrito, movimento), ):</label><br>
-        <textarea id="transicoes" name="transicoes" rows="10" cols="50" required></textarea><br>
-
-        <button type="submit">Salvar Especificação</button>
+    <form action="{{ url_for('converter_afn_afd') }}" method="post">
+        <button type="submit">Converter AFN em AFD</button>
     </form>
-    {% if tab == "definir" %}
-    <p>{{ resultado_definir }}</p>
-    {% endif %}
-
-    <h2>Opção 4: Testar Máquina de Turing Criada</h2>
-    <form id="form4" class="form-container" action="/testar" method="POST">
-        <label for="entrada4">Digite a cadeia:</label>
-        <input type="text" id="entrada4" name="entrada">
-        <button type="submit">Testar</button>
+    <form action="{{ url_for('minimizar_afd') }}" method="post">
+        <button type="submit">Minimizar AFD</button>
     </form>
-    {% if tab == "testar" %}
-    <div id="resultado1">Resultado: {{ resultado_testar }}</div>
-    <div class="fita-container" id="fita1">
-    <div class="fita-state">{{ fita|join('<br>')|safe }}</div>
-    </div>
-    {% endif %}
+    <form action="{{ url_for('maquina_turing') }}" method="post">
+        <button type="submit">Máquina de Turing</button>
+    </form>
+    <form action="{{ url_for('sair') }}">
+        <button type="submit">Sair</button>
+    </form>
 </body>
 </html>
