@@ -99,7 +99,6 @@ def ler_af():
             else:
                 mensagem = "O automato não reconheceu a linguagem"
     
-        # Definir o caminho da imagem com base no tipo
         imagem_automato = url_for('static', filename=f'{tipo}/desenhoAF.png')
 
         return render_template('resultado_ler.html', mensagem=mensagem, entrada=entrada, tipo=tipo, imagem_automato=imagem_automato)
@@ -116,28 +115,21 @@ def converter_afn_afd():
         except ValueError:
             return "Erro: O valor do campo 'tam_palavra' não é válido.", 400
 
-        # Continue com a lógica de conversão
         folAFN = "static/AFN/"
         folAFD = "static/AFD/"
 
-        # Inicia a conversão de AFN para AFD
         func_transicaoAFN = functions.extrairDict(folAFN)
         estado_inicial, estados_finais, alfabeto = functions.extrairInfAF(folAFN, "", set(), set())
-
-        estadoIniLista = [estado_inicial]  # Deixa como lista o estado inicial para fazer as transições posteriormente
-
-        # Informações AFD
+        estadoIniLista = [estado_inicial]  
         estadosAFD = []
         tabTranAFD = {}
         estados_finaisAFD = []
-
-        fila = [estadoIniLista]  # Vai armazenar os estados
+        fila = [estadoIniLista]  
 
         while fila:
             estado_atual = fila.pop(0)
             estadoAtualStr = "".join(estado_atual)
 
-            # Adiciona o estado atual à lista de estados do AFD
             if estadoAtualStr not in ["" .join(e) for e in estadosAFD]:
                 estadosAFD.append(estado_atual)
 
@@ -194,9 +186,7 @@ def resultado_conversao():
 
 @app.route('/minimizar_afd', methods=['GET', 'POST'])
 def minimizar_afd():
-    # Chama a função de minimização
     minimizacaoAFD()
-    # Renderiza a página de resultado
     return render_template('minimizacao_resultado.html')
 
 def minimizacaoAFD():
@@ -219,7 +209,6 @@ def minimizacaoAFD():
             else:
                 tabela_transicao[(estado1, estado2)] = True
 
-    # Atualização da tabela de distinção
     while mudou:
         mudou = False
         for (estado1, estado2), distintos in tabela_transicao.items():
