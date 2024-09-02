@@ -5,8 +5,8 @@ from graphviz import Digraph
 
 def conversaoAFNAFN():
 
-    folAFN = "static/AFN/"
-    folAFD = "static/AFD/"
+    folAFN = "AFN/"
+    folAFD = "AFD/"
     tamPalavra = 5
 
     #informaçoes AFN
@@ -68,26 +68,20 @@ def conversaoAFNAFN():
 
 
     #desenhar o AFD convertido INIC
-    automato = Digraph()
-    automato.attr(rankdir='LR')
-    automato.attr('node', shape='circle')    
-        
-    automato.node('->', shape='none', width='0', heigth='0',label='')
-    automato.edge('->', estado_inicial)
-        
-    for estado_final in estados_finaisAFD: 
+    delta_lista = functions.converter_para_lista_transicoes(tabTranAFD)
 
-        automato.node(estado_final, shape='doublecircle', fontsize='17')
-
-    for (estado, simbolo) in tabTranAFD:
-
-        destino = tabTranAFD[(estado, simbolo)]
-        automato.edge(estado,destino,label=simbolo) 
-
-    automato.render(folAFD + ('AFDConvertido'), format='png', cleanup=True)
-    #desenhar o AFD convertido FIM
+    automato = functions.desenhar_automato(estado_inicial, estados_finaisAFD, delta_lista)
+    automato.render(os.path.join(folAFD, 'AFDConvertido'), format='png')
 
 
 
     #teste de equivalencia
     functions.testar_multiplas_linguagens_geradas(folAFN, folAFD, tamPalavra)
+
+
+
+
+
+
+
+

@@ -1,143 +1,97 @@
 import functions
 from graphviz import Digraph
 
-def minizacaoAFD():
+def minimizacaoAFD(diretorioAFD):
 
-    folAFD = "static/AFD/"
-
-    alfabeto = []
-    estado_inicial = ''
-    estados_finais = []
-
-
-    verifica = functions.verificaAFcriado(folAFD)
-
-    if not verifica:
-
-        return
-
-    func_transicaoAFD = functions.extrairDict(folAFD)
-    estados = functions.readEstados(folAFD)
-    estado_inicial, estados_finais, alfabeto = functions.extrairInfAF(folAFD, estado_inicial, estados_finais, alfabeto)
+    # Extraindo informações e transições do AFD
+    estado_inicial, estados_finais, alfabeto = functions.extrairInfAF(diretorioAFD, "", [], [])
+    transicoes = functions.extrairDict(diretorioAFD)
+    estados = functions.readEstados(diretorioAFD)
 
 
-    #informaçoes automato minimizado
-    tabMinimiza = {}
-    valor = True
-    combEstados = {}
-    n_estados_finais = []
-    n_func_transicaoAFD = {}
-    n_estados = []
+    tabela_transicao = {}
+    mudou = True
+    estados_equivalentes = {}
+    nova_func_transicao = {}
+    estados_resultantes = []
 
-    for e1 in estados:
 
-        for e2 in estados:
-            
-            if e1 != e2:
+    # Configuração inicial da tabela de distinção
+    for estado1 in estados:
+        for estado2 in estados:
+            if estado1 != estado2:
 
-                tabMinimiza[(e1, e2)] = (e1 in estados_finais) != (e2 in estados_finais) #tabela minimizaçao
-
+                tabela_transicao[(estado1, estado2)] = (estado1 in estados_finais) != (estado2 in estados_finais)
             else:
 
-                tabMinimiza[(e1, e2)] = True
-
-    while valor:
-
-        valor = False
-        for (e1, e2), diferente in tabMinimiza.items():
-
-            if not diferente:
-
-                for simbolo in {simbolo for (estado, simbolo) in func_transicaoAFD.keys()}:
-
-                    chegada1 = func_transicaoAFD.get((e1, simbolo), [None])
-                    chegada2 = func_transicaoAFD.get((e2, simbolo), [None])
-
-                    if chegada1 and chegada2 and chegada1[0] and chegada2[0]:
-
-                        
-
-                            n_chegada1 = combEstados.get(chegada1[0], chegada1[0])
-                            n_chegada2 = combEstados.get(chegada2[0], chegada2[0])
-
-                            if (n_chegada1 != n_chegada2):
-
-                                if tabMinimiza.get((n_chegada1, n_chegada2), False) or tabMinimiza.get((n_chegada2, n_chegada1), False):
-
-                                    tabMinimiza[(e1, e2)] = True
-                                    valor = True
-                                    break
- 
-
-    for (e1, e2), diferente in tabMinimiza.items():
-        if not diferente:
-            combEstados[e1] = combEstados.get(e1, e1)
-            combEstados[e2] = combEstados.get(e1, e1)
+                tabela_transicao[(estado1, estado2)] = True
 
 
-    for estado in estados: #atualiza a lista de estados do AFD
+    # Atualização da tabela de distinção
+    while mudou:
+        mudou = False
+        for (estado1, estado2), distintos in tabela_transicao.items():
 
-        novo_estado = combEstados.get(estado, estado)
+            if not distintos:
 
-        if novo_estado not in n_estados:
-            n_estados.append(novo_estado)
+                for simbolo in alfabeto:
 
+                    chegada1 = functions.estadoEquivalente(transicoes.get((estado1, simbolo)), estados_equivalentes)
+                    chegada2 = functions.estadoEquivalente(transicoes.get((estado2, simbolo)), estados_equivalentes)
+                    if chegada1 and chegada2 and chegada1 != chegada2:
 
-    n_finais = []
+                        if tabela_transicao.get((chegada1, chegada2), False) or tabela_transicao.get((chegada2, chegada1), False):
+
+                            tabela_transicao[(estado1, estado2)] = True
+                            mudou = True
+                            break
+
+    # Combinação de estados equivalentes
+    for (estado1, estado2), distintos in tabela_transicao.items():
+
+        if not distintos:
+
+            estados_equivalentes[estado1] = estados_equivalentes.get(estado1, estado1)
+            estados_equivalentes[estado2] = estados_equivalentes.get(estado1, estado1)
+
+    # Criação dos novos estados para o AFD minimizado
+    for estado in estados:
+
+        novo_estado = functions.estadoEquivalente(estado, estados_equivalentes)
+        if novo_estado not in estados_resultantes:
+
+            estados_resultantes.append(novo_estado)
+
+    # Construção da nova função de transição para o AFD minimizado
+    for (estado, simbolo), chegada in transicoes.items():
+
+        novo_estado = functions.estadoEquivalente(estado, estados_equivalentes)
+        novo_chegada = functions.estadoEquivalente(chegada, estados_equivalentes)
+        nova_func_transicao[(novo_estado, simbolo)] = novo_chegada
+
+    # Definição dos novos estados finais
     novos_estados_finais = []
-    for s1 in estados:
-        for s2 in estados:
-            if tabMinimiza[(s1,s2)] == True:
-                print(f"S1: {s1}")
-                print(f"S2: {s2}")
-                if s1 in estados_finais and s2 in estados_finais and (s1 not in n_finais and s2 not in n_finais): #verifica onde ta vazio  e se é final e dps junta
-                    n_finais.extend([s1,s2])
-                    n_finais = list(set(n_finais)) #se tiver repetido tira.
-                    if (n_finais == s1 and n_finais == s2):
-                        novos_estados_finais  = estados_finais
-                    else:
-                        novos_estados_finais  = [''.join(n_finais)]
+    for estado in estados_finais:
+
+        novo_estado = functions.estadoEquivalente(estado, estados_equivalentes)
+        if novo_estado not in novos_estados_finais:
+
+            novos_estados_finais.append(novo_estado)
 
 
-
-    for (estado, simbolo), chegada in func_transicaoAFD.items():
-        if chegada:
-            novo_estado = combEstados.get(estado, estado)
-            nova_chegada = combEstados.get(chegada[0], chegada[0])
-            n_func_transicaoAFD[(novo_estado, simbolo)] = nova_chegada
+    # Ajuste do novo estado inicial
+    novo_estado_inicial = functions.estadoEquivalente(estado_inicial, estados_equivalentes)
 
 
-    print(f"Novos estados: {n_estados}")
-
-    print(f"Novos estados finais: {n_finais} e {novos_estados_finais}")
-
-    n_estado_inicial = combEstados.get(estado_inicial, estado_inicial)
-
-
-    # Criar o gráfico do autômato minimizado
-    automato = Digraph()
-    automato.attr(rankdir='LR')
-    automato.attr('node', shape='circle')
-    
-    automato.node('', shape='none')
-    automato.edge('', n_estado_inicial)
-    
-    for estado in n_finais:
-        """
-        if estado in n_finais:
-            estado = novos_estados_finais
-        """
-        automato.node((estado), shape='doublecircle', fontsize='19', fontcolor='green')
-    
-    for (estado, simbolo), destino in n_func_transicaoAFD.items():
-        """
-        if destino in n_finais:
-            destino = novos_estados_finais
-        """
-        automato.edge(estado, (destino), label=simbolo)
-
-    automato.render(folAFD + 'AutomatoMinimizado', format='png', cleanup=True)
+    # Salvando o AFD minimizado
+    functions.arquivoAutomato(diretorioAFD, nova_func_transicao)
+    functions.informacaoAutomato(diretorioAFD, novo_estado_inicial, novos_estados_finais, alfabeto).close()
+    functions.crEstados(diretorioAFD, estados_resultantes).close()
 
 
+    # Gerando a imagem do autômato minimizado
+    transicoes_lista = functions.converter_para_lista_transicoes(nova_func_transicao)
+    automato = functions.desenhar_automato(novo_estado_inicial, novos_estados_finais, transicoes_lista)
+    automato.render(diretorioAFD + 'AutomatoMinimizado', format='png', cleanup=True)
 
-
+    print("Processo de minimização concluído e arquivos gerados com sucesso.")
