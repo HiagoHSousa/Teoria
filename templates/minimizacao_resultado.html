@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado da Minimização do AFD</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='mini.css') }}">
+</head>
+<body>
+    <h1>Resultado da Minimização do AFD</h1>
+    <p>O processo de minimização foi concluído com sucesso.</p>
+    <img src="{{ url_for('static', filename='AFD/AutomatoMinimizado.png') }}" alt="Autômato Minimizdo">
+    <br><br>
+    <br>
+    <a href="{{ url_for('index') }}">Voltar ao menu principal</a>
+</body>
+</html>

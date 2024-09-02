@@ -9,29 +9,29 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: #121212;
+    color: #e0e0e0;
 }
 
 h1 {
     text-align: center;
-    color: #0056b3;
+    color: #1e88e5;
     margin-bottom: 20px;
 }
 
 form {
-    margin-bottom: 20px;
     align-content: center;
     display: flex;
+    margin: 20px;
     justify-content: center; 
     align-items: center;
     flex-direction: column;
+    border-radius: 8px;
 }
 
 button {
     width: 30%;
-    align-items: center;
-    background-color: #007bff;
+    background-color: #1e88e5;
     color: #fff;
     border: none;
     padding: 10px;
@@ -43,7 +43,7 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #1565c0;
 }
 
 .exit-button {

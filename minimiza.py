@@ -1,7 +1,9 @@
 import functions
 from graphviz import Digraph
 
-def minimizacaoAFD(diretorioAFD):
+diretorioAFD = "static/AFD/"
+
+def minimizacaoAFD():
 
     # Extraindo informações e transições do AFD
     estado_inicial, estados_finais, alfabeto = functions.extrairInfAF(diretorioAFD, "", [], [])

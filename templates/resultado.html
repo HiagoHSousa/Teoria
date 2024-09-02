@@ -8,8 +8,10 @@
 </head>
 <body>
     <h1>Resultado da Criação</h1>
+    <div class="img">
     <p>Autômato {{ tipo }} criado com sucesso!</p>
     <img src="{{ url_for('static', filename=tipo + '/desenhoAF.png') }}" alt="Desenho do Autômato">
-    <a href="{{ url_for('index') }}"><button>Voltar</button></a>
+    <a href="{{ url_for('index') }}"><button class="vo">Voltar</button></a>
+</div>
 </body>
 </html>

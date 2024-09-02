@@ -45,8 +45,7 @@ while True:
                 continue
 
             elif opcao == 4:
-                minimiza.minizacaoAFD()
-                print('carlos')
+                minimiza.minimizacaoAFD()
                 continue
 
             elif opcao == 5:
