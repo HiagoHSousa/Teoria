@@ -6,6 +6,7 @@ import os
 import functions
 import conversao
 import minimiza
+from graphviz import Digraph
 
 folAFD = "static/AFD/"
 folAFN = "static/AFN/"
@@ -104,12 +105,91 @@ def ler_af():
     
     return render_template('ler_af.html')
 
-@app.route('/converter', methods=['GET', 'POST'])
+@app.route('/conversao_afn_afd', methods=['GET', 'POST'])
 def converter_afn_afd():
     if request.method == 'POST':
-        conversao.conversaoAFNAFN()
-        return redirect(url_for('index'))
-    return render_template('converter.html')
+        try:
+            tam_palavra = int(request.form['tam_palavra'])
+        except KeyError:
+            return "Erro: O campo 'tam_palavra' está faltando no formulário.", 400
+        except ValueError:
+            return "Erro: O valor do campo 'tam_palavra' não é válido.", 400
+
+        # Continue com a lógica de conversão
+        folAFN = "static/AFN/"
+        folAFD = "static/AFD/"
+
+        # Inicia a conversão de AFN para AFD
+        func_transicaoAFN = functions.extrairDict(folAFN)
+        estado_inicial, estados_finais, alfabeto = functions.extrairInfAF(folAFN, "", set(), set())
+
+        estadoIniLista = [estado_inicial]  # Deixa como lista o estado inicial para fazer as transições posteriormente
+
+        # Informações AFD
+        estadosAFD = []
+        tabTranAFD = {}
+        estados_finaisAFD = []
+
+        fila = [estadoIniLista]  # Vai armazenar os estados
+
+        while fila:
+            estado_atual = fila.pop(0)
+            estadoAtualStr = "".join(estado_atual)
+
+            # Adiciona o estado atual à lista de estados do AFD
+            if estadoAtualStr not in ["" .join(e) for e in estadosAFD]:
+                estadosAFD.append(estado_atual)
+
+            for simbolo in alfabeto:
+                estado_seguinte = []  # Armazena os estados que virão a partir do atual
+
+                for estado in estado_atual:
+                    if (estado, simbolo) in func_transicaoAFN:
+                        for novoEstado in func_transicaoAFN[(estado, simbolo)]:
+                            if novoEstado not in estado_seguinte:
+                                estado_seguinte.append(novoEstado)  # Adiciona um estado na lista de seguinte caso ele não exista
+
+                if estado_seguinte:
+                    estadoSegStr = "".join(estado_seguinte)
+                    tabTranAFD[(estadoAtualStr, simbolo)] = estadoSegStr
+
+                    if estado_seguinte not in estadosAFD:
+                        fila.append(estado_seguinte)
+
+            if any(estado in estados_finais for estado in estado_atual):
+                estados_finaisAFD.append(estadoAtualStr)
+
+        # Salva o AFD em um arquivo
+        functions.arquivoAutomato(folAFD, tabTranAFD).close()
+        functions.informacaoAutomato(folAFD, estado_inicial, estados_finaisAFD, alfabeto).close()
+        functions.crEstados(folAFD, ["".join(e) for e in estadosAFD]).close()
+
+        # Desenhar o AFD convertido
+        automato = Digraph()
+        automato.attr(rankdir='LR')
+        automato.attr('node', shape='circle')
+
+        automato.node('->', shape='none', width='0', height='0', label='')
+        automato.edge('->', estado_inicial)
+
+        for estado_final in estados_finaisAFD:
+            automato.node(estado_final, shape='doublecircle', fontsize='17')
+
+        for (estado, simbolo) in tabTranAFD:
+            destino = tabTranAFD[(estado, simbolo)]
+            automato.edge(estado, destino, label=simbolo)
+
+        caminho_imagem = folAFD + 'AFDConvertido.png'
+        automato.render(folAFD + 'AFDConvertido', format='png', cleanup=True)
+
+        return render_template('resultado_conversao.html', entrada=tam_palavra, mensagem="Conversão concluída com sucesso!", imagem_automato=url_for('static', filename='AFD/AFDConvertido.png'))
+
+    return render_template('conversao_afn_afd.html')
+
+
+@app.route('/resultado_conversao')
+def resultado_conversao():
+    return render_template('resultado_conversao.html')
 
 @app.route('/minimizar', methods=['GET', 'POST'])
 def minimizar_afd():
