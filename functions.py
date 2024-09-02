@@ -1,5 +1,4 @@
 import os
-import time
 from graphviz import Digraph
 import itertools
 
@@ -75,31 +74,6 @@ def extrairDict(folder): #le o arquivo das transiçoes do AF
     func_transicao = eval(conteudo)
     return func_transicao
 
-
-def verificaAFcriado(pasta):
-
-    time.sleep(1)
-    path = os.path.join(pasta, 'AFCriado.txt')
-
-    if not os.path.isfile(path):
-
-        print('Arquivo AFCriado.txt não encontrado. Crie um AFD ou AFN.')
-        return False
-    
-    return True
-
-
-def pastasCriadas():
-
-    time.sleep(1)
-    if os.path.exists('static/AFD'):
-        print("\n Há um AFD já criado\n")
-
-    if os.path.exists('static/AFN'):
-        print("\n Há um AFN já criado\n")
-
-    else:
-        print("\nCrie um AFD ou AFN\n")
 
 
 def converter_para_lista_transicoes(transicoes_dict): #converte o AF para poder desenhar na outra funçao
