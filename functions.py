@@ -61,6 +61,7 @@ def extrairInfAF(folder, estado_inicial, estados_finais, alfabeto): #le o arquiv
     return estado_inicial, estados_finais, alfabeto
 
 
+
 def extrairDict(folder): #le o arquivo das transiçoes do AF
 
     filepath = os.path.join(folder, 'AFCriado.txt')
